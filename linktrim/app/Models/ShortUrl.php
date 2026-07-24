@@ -9,6 +9,8 @@ class ShortUrl extends Model
 {
     protected $fillable = ['original_url', 'short_code'];
 
+    protected $casts = ['last_used_at' => 'datetime'];
+
     public static function generateUniqueCode(int $length = 6): string
     {
         do {

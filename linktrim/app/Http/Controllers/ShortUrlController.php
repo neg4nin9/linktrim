@@ -46,9 +46,24 @@ class ShortUrlController extends Controller
         return response()->json($this->format($shortUrl), 201);
     }
 
+    public function runScheduler(Request $request): JsonResponse
+    {
+        if ($request->query('token') !== config('app.scheduler_token')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $deleted = ShortUrl::where(function ($q) {
+            $q->whereNull('last_used_at')->where('created_at', '<', now()->subYear());
+        })->orWhere('last_used_at', '<', now()->subYear())->delete();
+
+        return response()->json(['deleted' => $deleted]);
+    }
+
     public function redirect(string $code): RedirectResponse
     {
         $shortUrl = ShortUrl::where('short_code', $code)->firstOrFail();
+
+        $shortUrl->update(['last_used_at' => now()]);
 
         return redirect()->away($shortUrl->original_url, 302);
     }
