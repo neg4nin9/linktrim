@@ -1,7 +1,7 @@
 FROM php:8.3-cli
 
 RUN apt-get update && apt-get install -y \
-    unzip curl libpq-dev libonig-dev libxml2-dev \
+    unzip curl libpq-dev libonig-dev libxml2-dev libssl-dev default-mysql-client \
     && docker-php-ext-install pdo pdo_mysql mbstring xml \
     && apt-get clean
 
