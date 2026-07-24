@@ -13,6 +13,8 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+RUN cp /var/www/certs/ca.pem /usr/local/share/ca-certificates/aiven-ca.crt && update-ca-certificates
+
 EXPOSE 8080
 
 CMD php artisan config:cache && php artisan route:cache && php artisan serve --host=0.0.0.0 --port=8080
