@@ -10,7 +10,7 @@ const i18n = {
     copy: 'Copiar',
     copied: '¡Copiado!',
     history: 'Últimos enlaces acortados',
-    sleepNotice: '⚠️ El backend y la base de datos se alojan en planes gratuitos que se apagan por inactividad. Es posible que el servicio no esté disponible.',
+    sleepNotice: '⚠️ El backend y la base de datos se alojan en planes gratuitos que se apagan por inactividad. La disponibilidad del servicio puede variar.',
     footer: 'Hecho con ♥ por Eddy Conejo',
   },
   en: {
@@ -21,7 +21,7 @@ const i18n = {
     copy: 'Copy',
     copied: 'Copied!',
     history: 'Recent shortened links',
-    sleepNotice: '⚠️ The backend and database are hosted on free tiers that spin down when inactive. The service may be unavailable.',
+    sleepNotice: '⚠️ The backend and database are hosted on free plans that spin down when inactive. Service availability may vary.',
     footer: 'Made with ♥ by Eddy Conejo',
   },
 }
@@ -32,7 +32,6 @@ function App() {
   const [lang, setLang] = useState(
     navigator.language.startsWith('es') ? 'es' : 'en'
   )
-  const [dark, setDark] = useState(true)
   const [showNotice, setShowNotice] = useState(false)
   const [copied, setCopied] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -78,8 +77,8 @@ function App() {
   }
 
   return (
-    <div className={dark ? 'dark' : ''}>
-      <div className="relative min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-white transition-colors duration-300 flex flex-col">
+    <div className="dark">
+      <div className="relative min-h-screen bg-gray-950 text-white flex flex-col">
         <Bubbles />
 
         <div className="relative z-10 flex justify-end gap-2 p-4">
@@ -98,20 +97,12 @@ function App() {
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
             </button>
             {showNotice && (
-              <div className="absolute right-0 mt-2 w-72 bg-gray-900 border border-orange-500 text-gray-300 text-xs rounded-lg p-3 z-50 shadow-lg">
+              <div className="animate-slide-down absolute right-0 mt-2 w-72 bg-gray-900 border border-orange-500 text-gray-300 text-xs rounded-lg p-3 z-50 shadow-lg">
                 {t.sleepNotice}
               </div>
             )}
           </div>
-          <button
-            onClick={() => setDark(!dark)}
-            className="text-sm px-3 py-1 rounded-full h-8 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-black transition-all duration-200 flex items-center"
-          >
-            {dark
-              ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-              : <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            }
-          </button>
+
         </div>
 
         <main className="relative z-10 flex-1 flex flex-col items-center justify-start pt-[20vh] sm:pt-[30vh] px-4 pb-12">
@@ -119,7 +110,7 @@ function App() {
           <h1 className="text-5xl sm:text-7xl font-black tracking-tight mb-3 text-white neon-text">
             LinkTrim
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base mb-10 text-center">
+          <p className="text-gray-400 text-sm sm:text-base mb-10 text-center">
             {t.subtitle}
           </p>
 
@@ -133,7 +124,7 @@ function App() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               required
-              className="flex-1 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200"
+              className="flex-1 bg-gray-900 border border-gray-700 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 rounded-lg px-4 py-3 text-white placeholder-gray-500 transition-all duration-200"
             />
             <button
               type="submit"
@@ -144,13 +135,13 @@ function App() {
           </form>
 
           {error && (
-            <p className="mt-4 text-red-400 text-sm">{error}</p>
+            <p className="animate-fade-in mt-4 text-red-400 text-sm">{error}</p>
           )}
 
           {shortUrl && (
-            <div className="mt-8 w-full max-w-xl bg-gray-100 dark:bg-gray-900 border border-orange-500 rounded-lg p-5 neon-box flex flex-row items-start sm:items-center gap-4">
+            <div className="animate-fade-in mt-8 w-full max-w-xl bg-gray-900 border border-orange-500 rounded-lg p-5 neon-box flex flex-row items-start sm:items-center gap-4">
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{t.result}</p>
+                <p className="text-xs text-gray-400 mb-1">{t.result}</p>
                 <a
                   href={shortUrl}
                   target="_blank"
@@ -171,7 +162,7 @@ function App() {
           
           {history.length > 0 && (
             <div className="mt-10 w-full max-w-xl">
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{t.history}</p>
+              <p className="text-xs text-gray-400 mb-2">{t.history}</p>
               <ul className="flex flex-col gap-1">
                 {history.map(link => (
                   <li key={link}>
@@ -190,7 +181,7 @@ function App() {
           )}
         </main>
 
-        <footer className="relative z-10 py-4 text-center text-xs text-gray-500 dark:text-gray-600">
+        <footer className="relative z-10 py-4 text-center text-xs text-gray-600">
           {t.footer}
         </footer>
       </div>
