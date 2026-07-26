@@ -17,8 +17,8 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        DB::statement('ALTER TABLE short_urls ADD UNIQUE short_urls_original_url_unique (original_url(191))');
-    }
+            DB::statement('ALTER TABLE short_urls ADD UNIQUE short_urls_original_url_unique (original_url(191))');
+        }
 
     public function down(): void
     {
