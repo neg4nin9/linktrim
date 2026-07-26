@@ -10,6 +10,8 @@ const i18n = {
     copy: 'Copiar',
     copied: '¡Copiado!',
     history: 'Últimos enlaces acortados',
+    sleepNotice: '⚠️ El backend y la base de datos se alojan en planes gratuitos que se apagan por inactividad. Es posible que el servicio no esté disponible.',
+    footer: 'Hecho con ♥ por Eddy Conejo',
   },
   en: {
     subtitle: 'Shorten your URLs quickly and easily',
@@ -19,6 +21,8 @@ const i18n = {
     copy: 'Copy',
     copied: 'Copied!',
     history: 'Recent shortened links',
+    sleepNotice: '⚠️ The backend and database are hosted on free tiers that spin down when inactive. The service may be unavailable.',
+    footer: 'Made with ♥ by Eddy Conejo',
   },
 }
 
@@ -29,6 +33,7 @@ function App() {
     navigator.language.startsWith('es') ? 'es' : 'en'
   )
   const [dark, setDark] = useState(true)
+  const [showNotice, setShowNotice] = useState(false)
   const [copied, setCopied] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -80,15 +85,32 @@ function App() {
         <div className="relative z-10 flex justify-end gap-2 p-4">
           <button
             onClick={toggleLang}
-            className="text-sm px-3 py-1 rounded-full border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-black transition-all duration-200"
+            className="text-sm px-3 py-1 rounded-full h-8 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-black transition-all duration-200 flex items-center gap-1"
           >
-            {lang === 'es' ? '🇪🇸 ES' : '🇬🇧 EN'}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20A14.5 14.5 0 0 0 12 2"/><path d="M2 12h20"/></svg>
+            {lang === 'es' ? 'ES' : 'EN'}
           </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowNotice(!showNotice)}
+              className="text-sm px-3 py-1 rounded-full h-8 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-black transition-all duration-200"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            </button>
+            {showNotice && (
+              <div className="absolute right-0 mt-2 w-72 bg-gray-900 border border-orange-500 text-gray-300 text-xs rounded-lg p-3 z-50 shadow-lg">
+                {t.sleepNotice}
+              </div>
+            )}
+          </div>
           <button
             onClick={() => setDark(!dark)}
-            className="text-sm px-3 py-1 rounded-full border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-black transition-all duration-200"
+            className="text-sm px-3 py-1 rounded-full h-8 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-black transition-all duration-200 flex items-center"
           >
-            {dark ? '☀️' : '🌙'}
+            {dark
+              ? <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+              : <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            }
           </button>
         </div>
 
@@ -167,6 +189,10 @@ function App() {
             </div>
           )}
         </main>
+
+        <footer className="relative z-10 py-4 text-center text-xs text-gray-500 dark:text-gray-600">
+          {t.footer}
+        </footer>
       </div>
     </div>
   )
