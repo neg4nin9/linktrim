@@ -13,10 +13,11 @@ return new class extends Migration
             $table->id();
             $table->text('original_url');
             $table->string('short_code', 8)->unique();
+            $table->timestamp('last_used_at')->nullable();
             $table->timestamps();
         });
 
-        DB::statement('ALTER TABLE short_urls ADD UNIQUE short_urls_original_url_unique (original_url(768))');
+        DB::statement('ALTER TABLE short_urls ADD UNIQUE short_urls_original_url_unique (original_url(191))');
     }
 
     public function down(): void

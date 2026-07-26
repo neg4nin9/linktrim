@@ -17,7 +17,7 @@ function generateBubbles(count) {
   }))
 }
 
-export default function Bubbles() {
+export default function Bubbles({ t }) {
   const [count, setCount] = useState(() => Number(localStorage.getItem('bubbleCount')) || 20)
   const [enabled, setEnabled] = useState(() => localStorage.getItem('bubblesEnabled') !== 'false')
   const [colorIdx, setColorIdx] = useState(() => Number(localStorage.getItem('bubbleColor')) || 0)
@@ -59,7 +59,7 @@ export default function Bubbles() {
             <button
               onClick={() => handleEnabled(!enabled)}
               className="relative w-8 h-8 cursor-pointer border border-orange-500/40 rounded-full"
-              title={enabled ? 'Desactivar burbujas' : 'Activar burbujas'}
+              title={enabled ? t.bubblesToggleOff : t.bubblesToggleOn}
             >
               <span className="text-xl leading-none">🫧</span>
               {!enabled && (
@@ -85,7 +85,7 @@ export default function Bubbles() {
         <button
           onClick={() => setOpen(o => !o)}
           className="bg-black/70 border border-orange-500/40 rounded-full w-9 h-9 text-lg neon-btn cursor-pointer"
-          title="Ajustar burbujas"
+          title={t.bubblesAdjust}
         >🫧</button>
       </div>
     </>

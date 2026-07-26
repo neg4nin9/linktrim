@@ -10,8 +10,12 @@ const i18n = {
     copy: 'Copiar',
     copied: '¡Copiado!',
     history: 'Últimos enlaces acortados',
+    flush: 'Limpiar historial',
     sleepNotice: '⚠️ El backend y la base de datos se alojan en planes gratuitos que se apagan por inactividad. La disponibilidad del servicio puede variar.',
     footer: 'Hecho con ♥ por Eddy Conejo',
+    bubblesToggleOn: 'Activar burbujas',
+    bubblesToggleOff: 'Desactivar burbujas',
+    bubblesAdjust: 'Ajustar burbujas',
   },
   en: {
     subtitle: 'Shorten your URLs quickly and easily',
@@ -21,8 +25,27 @@ const i18n = {
     copy: 'Copy',
     copied: 'Copied!',
     history: 'Recent shortened links',
+    flush: 'Clear history',
     sleepNotice: '⚠️ The backend and database are hosted on free plans that spin down when inactive. Service availability may vary.',
     footer: 'Made with ♥ by Eddy Conejo',
+    bubblesToggleOn: 'Enable bubbles',
+    bubblesToggleOff: 'Disable bubbles',
+    bubblesAdjust: 'Adjust bubbles',
+  },
+  zh: {
+    subtitle: '快速简便地缩短您的网址',
+    placeholder: '在此粘贴您的网址...',
+    shorten: '缩短',
+    result: '您的短链接：',
+    copy: '复制',
+    copied: '已复制！',
+    history: '最近缩短的链接',
+    flush: '清除历史',
+    sleepNotice: '⚠️ 后端和数据库托管在免费计划上，闲置时会关闭。服务可用性可能有所不同。',
+    footer: '由 Eddy Conejo 用 ♥ 制作',
+    bubblesToggleOn: '启用气泡',
+    bubblesToggleOff: '禁用气泡',
+    bubblesAdjust: '调整气泡',
   },
 }
 
@@ -30,7 +53,7 @@ function App() {
   const [url, setUrl] = useState('')
   const [shortUrl, setShortUrl] = useState('')
   const [lang, setLang] = useState(
-    navigator.language.startsWith('es') ? 'es' : 'en'
+    navigator.language.startsWith('zh') ? 'zh' : navigator.language.startsWith('es') ? 'es' : 'en'
   )
   const [showNotice, setShowNotice] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -47,7 +70,8 @@ function App() {
   }, [history])
 
   const t = i18n[lang]
-  const toggleLang = () => setLang(lang === 'es' ? 'en' : 'es')
+  const LANGS = ['en', 'es', 'zh']
+  const toggleLang = () => setLang(LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -79,7 +103,7 @@ function App() {
   return (
     <div className="dark">
       <div className="relative min-h-screen bg-gray-950 text-white flex flex-col">
-        <Bubbles />
+        <Bubbles t={t} />
 
         <div className="relative z-10 flex justify-end gap-2 p-4">
           <button
@@ -87,7 +111,7 @@ function App() {
             className="text-sm px-3 py-1 rounded-full h-8 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-black transition-all duration-200 flex items-center gap-1"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20A14.5 14.5 0 0 0 12 2"/><path d="M2 12h20"/></svg>
-            {lang === 'es' ? 'ES' : 'EN'}
+            {lang === 'zh' ? 'ZH' : lang === 'es' ? 'ES' : 'EN'}
           </button>
           <div className="relative">
             <button
@@ -162,7 +186,15 @@ function App() {
           
           {history.length > 0 && (
             <div className="mt-10 w-full max-w-xl">
-              <p className="text-xs text-gray-400 mb-2">{t.history}</p>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs text-gray-400">{t.history}</p>
+                <button
+                  onClick={() => setHistory([])}
+                  className="text-xs text-gray-500 hover:text-red-400 transition-colors duration-200"
+                >
+                  {t.flush}
+                </button>
+              </div>
               <ul className="flex flex-col gap-1">
                 {history.map(link => (
                   <li key={link}>
