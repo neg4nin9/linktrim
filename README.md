@@ -80,7 +80,7 @@ linktrim/               ← monorepo root
 
 ## Database
 
-Table: `short_urls`
+### `short_urls`
 
 | Column | Type | Notes |
 |--------|------|-------|
@@ -90,6 +90,19 @@ Table: `short_urls`
 | `last_used_at` | timestamp | Nullable, updated on each redirect |
 | `created_at` | timestamp | |
 | `updated_at` | timestamp | |
+
+### `sessions`
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `id` | varchar(255) | Primary key, session identifier |
+| `user_id` | bigint unsigned | Nullable, linked to the authenticated user |
+| `ip_address` | varchar(45) | Nullable client IP address |
+| `user_agent` | text | Nullable browser/device metadata |
+| `payload` | longtext | Serialized session payload |
+| `last_activity` | int | Unix timestamp used for session expiration |
+
+This table is used by Laravel's database session driver and is created by the session migration included in the backend.
 
 ---
 

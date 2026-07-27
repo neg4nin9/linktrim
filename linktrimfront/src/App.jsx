@@ -5,47 +5,77 @@ const i18n = {
   es: {
     subtitle: 'Acorta tus URLs de forma rápida y sencilla',
     placeholder: 'Pega tu URL aquí...',
+    urlLabel: 'Campo de entrada de URL',
     shorten: 'Acortar',
+    shortenLoading: 'Acortando...',
     result: 'Tu enlace acortado:',
-    copy: 'Copiar',
+    copy: 'Copiar al portapapeles',
     copied: '¡Copiado!',
     history: 'Últimos enlaces acortados',
     flush: 'Limpiar historial',
+    flushConfirm: '¿Estás seguro? No se puede deshacer.',
     sleepNotice: '⚠️ El backend y la base de datos se alojan en planes gratuitos que se apagan por inactividad. La disponibilidad del servicio puede variar.',
     footer: 'Hecho con ♥ por Eddy Conejo',
     bubblesToggleOn: 'Activar burbujas',
     bubblesToggleOff: 'Desactivar burbujas',
     bubblesAdjust: 'Ajustar burbujas',
+    errorInvalid: 'Por favor ingresa una URL válida',
+    errorServer: 'Error del servidor: intenta de nuevo',
+    errorNetwork: 'Error de conexión: verifica tu internet',
+    errorGeneric: 'Ocurrió un error inesperado',
+    langButton: 'Cambiar idioma',
+    infoButton: 'Información del servicio',
+    successMessage: 'Enlace acortado exitosamente',
   },
   en: {
     subtitle: 'Shorten your URLs quickly and easily',
     placeholder: 'Paste your URL here...',
+    urlLabel: 'URL input field',
     shorten: 'Shorten',
+    shortenLoading: 'Shortening...',
     result: 'Your shortened link:',
-    copy: 'Copy',
+    copy: 'Copy to clipboard',
     copied: 'Copied!',
     history: 'Recent shortened links',
     flush: 'Clear history',
+    flushConfirm: 'Are you sure? This cannot be undone.',
     sleepNotice: '⚠️ The backend and database are hosted on free plans that spin down when inactive. Service availability may vary.',
     footer: 'Made with ♥ by Eddy Conejo',
     bubblesToggleOn: 'Enable bubbles',
     bubblesToggleOff: 'Disable bubbles',
     bubblesAdjust: 'Adjust bubbles',
+    errorInvalid: 'Please enter a valid URL',
+    errorServer: 'Server error: please try again',
+    errorNetwork: 'Connection error: check your internet',
+    errorGeneric: 'An unexpected error occurred',
+    langButton: 'Change language',
+    infoButton: 'Service information',
+    successMessage: 'Link shortened successfully',
   },
   zh: {
     subtitle: '快速简便地缩短您的网址',
     placeholder: '在此粘贴您的网址...',
+    urlLabel: 'URL输入字段',
     shorten: '缩短',
+    shortenLoading: '正在缩短...',
     result: '您的短链接：',
-    copy: '复制',
+    copy: '复制到剪贴板',
     copied: '已复制！',
     history: '最近缩短的链接',
     flush: '清除历史',
+    flushConfirm: '您确定吗？此操作无法撤销。',
     sleepNotice: '⚠️ 后端和数据库托管在免费计划上，闲置时会关闭。服务可用性可能有所不同。',
     footer: '由 Eddy Conejo 用 ♥ 制作',
     bubblesToggleOn: '启用气泡',
     bubblesToggleOff: '禁用气泡',
     bubblesAdjust: '调整气泡',
+    errorInvalid: '请输入有效的URL',
+    errorServer: '服务器错误：请重试',
+    errorNetwork: '连接错误：检查您的网络',
+    errorGeneric: '发生了意外错误',
+    langButton: '更改语言',
+    infoButton: '服务信息',
+    successMessage: '链接缩短成功',
   },
 }
 
@@ -100,120 +130,170 @@ function App() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const getErrorMessage = (errorText) => {
+    if (errorText.includes('invalid') || errorText.includes('URL')) return t.errorInvalid
+    if (errorText.includes('server') || errorText.includes('500')) return t.errorServer
+    if (errorText.includes('network') || errorText.includes('Failed')) return t.errorNetwork
+    return t.errorGeneric
+  }
+
+  const handleFlush = () => {
+    if (window.confirm(t.flushConfirm)) {
+      setHistory([])
+    }
+  }
+
   return (
     <div className="dark">
       <div className="relative min-h-screen bg-gray-950 text-white flex flex-col">
         <Bubbles t={t} />
 
-        <div className="relative z-10 flex justify-end gap-2 p-4">
+        <header className="relative z-10 flex justify-end gap-2 p-4" role="banner">
           <button
             onClick={toggleLang}
-            className="text-sm px-3 py-1 rounded-full h-8 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-black transition-all duration-200 flex items-center gap-1"
+            className="text-sm px-3 py-1 rounded-full h-8 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-black focus:ring-2 focus:ring-orange-300 focus:outline-none transition-all duration-200 flex items-center gap-1"
+            aria-label={t.langButton}
+            title={t.langButton}
+            aria-current={`language: ${lang}`}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20A14.5 14.5 0 0 0 12 2"/><path d="M2 12h20"/></svg>
-            {lang === 'zh' ? 'ZH' : lang === 'es' ? 'ES' : 'EN'}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20A14.5 14.5 0 0 0 12 2"/><path d="M2 12h20"/></svg>
+            <span aria-label={`Current language: ${lang === 'zh' ? 'Chinese' : lang === 'es' ? 'Spanish' : 'English'}`}>
+              {lang === 'zh' ? 'ZH' : lang === 'es' ? 'ES' : 'EN'}
+            </span>
           </button>
           <div className="relative">
             <button
               onClick={() => setShowNotice(!showNotice)}
-              className="text-sm px-3 py-1 rounded-full h-8 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-black transition-all duration-200"
+              className="text-sm px-3 py-1 rounded-full h-8 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-black focus:ring-2 focus:ring-orange-300 focus:outline-none transition-all duration-200"
+              aria-label={t.infoButton}
+              title={t.infoButton}
+              aria-expanded={showNotice}
+              aria-controls="service-notice"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
             </button>
             {showNotice && (
-              <div className="animate-slide-down absolute right-0 mt-2 w-72 bg-gray-900 border border-orange-500 text-gray-300 text-xs rounded-lg p-3 z-50 shadow-lg">
+              <div id="service-notice" className="animate-slide-down absolute right-0 mt-2 w-72 bg-gray-900 border border-orange-500 text-gray-300 text-xs rounded-lg p-3 z-50 shadow-lg" role="region" aria-label="Service information">
                 {t.sleepNotice}
               </div>
             )}
           </div>
+        </header>
 
-        </div>
-
-        <main className="relative z-10 flex-1 flex flex-col items-center justify-start pt-[20vh] sm:pt-[30vh] px-4 pb-12">
+        <main className="relative z-10 flex-1 flex flex-col items-center justify-start pt-[20vh] sm:pt-[30vh] px-4 pb-12" role="main" aria-label="URL shortening service">
 
           <h1 className="text-5xl sm:text-7xl font-black tracking-tight mb-3 text-white neon-text">
             LinkTrim
           </h1>
-          <p className="text-gray-400 text-sm sm:text-base mb-10 text-center">
+          <p className="text-gray-400 text-sm sm:text-base mb-10 text-center" role="doc-subtitle">
             {t.subtitle}
           </p>
 
           <form
             onSubmit={handleSubmit}
             className="w-full max-w-xl flex flex-row gap-3"
+            role="search"
+            aria-label="URL shortening form"
           >
+            <label htmlFor="url-input" className="sr-only">{t.urlLabel}</label>
             <input
+              id="url-input"
               type="url"
               placeholder={t.placeholder}
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               required
-              className="flex-1 bg-gray-900 border border-gray-700 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 rounded-lg px-4 py-3 text-white placeholder-gray-500 transition-all duration-200"
+              disabled={loading}
+              className="flex-1 bg-gray-900 border border-gray-700 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded-lg px-4 py-3 text-white placeholder-gray-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label={t.urlLabel}
+              aria-describedby={error ? 'error-message' : 'url-helper'}
             />
+            <p id="url-helper" className="sr-only">Enter or paste a URL to shorten</p>
             <button
               type="submit"
-              className="bg-orange-500 hover:bg-orange-400 text-white font-bold px-6 py-3 rounded-lg neon-btn transition-all duration-200 whitespace-nowrap"
+              disabled={loading}
+              className="bg-orange-500 hover:bg-orange-400 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold px-6 py-3 rounded-lg neon-btn transition-all duration-200 whitespace-nowrap focus:ring-2 focus:ring-orange-300 focus:outline-none"
+              aria-busy={loading}
+              aria-label={loading ? t.shortenLoading : t.shorten}
             >
-              {loading ? '...' : t.shorten}
+              {loading ? (
+                <span className="inline-flex items-center gap-2">
+                  <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-orange-500 rounded-full"></span>
+                  {t.shortenLoading}
+                </span>
+              ) : t.shorten}
             </button>
           </form>
 
           {error && (
-            <p className="animate-fade-in mt-4 text-red-400 text-sm">{error}</p>
+            <p id="error-message" className="animate-fade-in mt-4 text-red-400 text-sm" role="alert" aria-live="polite">
+              <span className="font-semibold">Error:</span> {getErrorMessage(error)}
+            </p>
           )}
 
           {shortUrl && (
-            <div className="animate-fade-in mt-8 w-full max-w-xl bg-gray-900 border border-orange-500 rounded-lg p-5 neon-box flex flex-row items-start sm:items-center gap-4">
+            <div className="animate-fade-in mt-8 w-full max-w-xl bg-gray-900 border border-orange-500 rounded-lg p-5 neon-box flex flex-row items-start sm:items-center gap-4" role="region" aria-label="Shortened link result" aria-live="polite">
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-400 mb-1">{t.result}</p>
+                <p className="text-xs text-gray-400 mb-1" id="result-label">{t.result}</p>
                 <a
                   href={shortUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-orange-400 hover:text-orange-300 font-mono text-sm break-all underline underline-offset-2"
+                  className="text-orange-400 hover:text-orange-300 focus:ring-2 focus:ring-orange-300 focus:outline-none font-mono text-sm break-all underline underline-offset-2"
+                  aria-labelledby="result-label"
+                  title={`Open ${shortUrl} in new tab`}
                 >
                   {shortUrl}
                 </a>
               </div>
               <button
                 onClick={handleCopy}
-                className="shrink-0 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-black font-semibold px-4 py-2 rounded-lg text-sm transition-all duration-200"
+                className="shrink-0 border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-black focus:ring-2 focus:ring-orange-300 focus:outline-none font-semibold px-4 py-2 rounded-lg text-sm transition-all duration-200"
+                aria-label={copied ? t.copied : t.copy}
+                title={t.copy}
               >
-                {copied ? t.copied : t.copy}
+                {copied ? (
+                  <span className="flex items-center gap-2">
+                    <span aria-hidden="true">✓</span> {t.copied}
+                  </span>
+                ) : t.copy}
               </button>
             </div>
           )}
           
           {history.length > 0 && (
-            <div className="mt-10 w-full max-w-xl">
+            <nav className="mt-10 w-full max-w-xl" aria-label="Link history">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs text-gray-400">{t.history}</p>
+                <h2 className="text-xs text-gray-400 font-semibold">{t.history}</h2>
                 <button
-                  onClick={() => setHistory([])}
-                  className="text-xs text-gray-500 hover:text-red-400 transition-colors duration-200"
+                  onClick={handleFlush}
+                  className="text-xs text-gray-500 hover:text-red-400 focus:ring-2 focus:ring-orange-300 focus:outline-none transition-colors duration-200 px-2 py-1"
+                  aria-label={t.flush}
+                  title={t.flushConfirm}
                 >
                   {t.flush}
                 </button>
               </div>
-              <ul className="flex flex-col gap-1">
+              <ul className="flex flex-col gap-1" role="list">
                 {history.map(link => (
-                  <li key={link}>
+                  <li key={link} role="listitem">
                     <a
                       href={link}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-orange-400 hover:text-orange-300 font-mono text-sm break-all"
+                      className="text-orange-400 hover:text-orange-300 focus:ring-2 focus:ring-orange-300 focus:outline-none font-mono text-sm break-all transition-colors duration-200"
+                      title={`Open ${link} in new tab`}
                     >
                       {link}
                     </a>
                   </li>
                 ))}
               </ul>
-            </div>
+            </nav>
           )}
         </main>
 
-        <footer className="relative z-10 py-4 text-center text-xs text-gray-600">
+        <footer className="relative z-10 py-4 text-center text-xs text-gray-600" role="contentinfo">
           {t.footer}
         </footer>
       </div>

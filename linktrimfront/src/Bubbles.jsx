@@ -35,11 +35,12 @@ export default function Bubbles({ t }) {
 
   return (
     <>
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0" aria-hidden="true" role="presentation">
         {enabled && bubbles.map((b, i) => (
           <span
             key={i}
             className="bubble"
+            aria-hidden="true"
             style={{
               width: b.size,
               height: b.size,
@@ -53,17 +54,19 @@ export default function Bubbles({ t }) {
         ))}
       </div>
 
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
+      <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2" role="region" aria-label="Bubble animation controls">
         {open && (
-          <div className="animate-fade-in bg-black/70 border border-orange-500/40 rounded-xl px-4 py-3 flex gap-2 items-center neon-box">
+          <div className="animate-fade-in bg-black/70 border border-orange-500/40 rounded-xl px-4 py-3 flex gap-2 items-center neon-box" role="group" aria-label="Bubble settings">
             <button
               onClick={() => handleEnabled(!enabled)}
-              className="relative w-8 h-8 cursor-pointer border border-orange-500/40 rounded-full"
+              className="relative w-8 h-8 cursor-pointer border border-orange-500/40 rounded-full focus:ring-2 focus:ring-orange-300 focus:outline-none transition-all"
+              aria-label={enabled ? t.bubblesToggleOff : t.bubblesToggleOn}
+              aria-pressed={enabled}
               title={enabled ? t.bubblesToggleOff : t.bubblesToggleOn}
             >
-              <span className="text-xl leading-none">🫧</span>
+              <span className="text-xl leading-none" aria-hidden="true">🫧</span>
               {!enabled && (
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 32 32">
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 32 32" aria-hidden="true">
                   <circle cx="16" cy="16" r="13" stroke="#ef4444" strokeWidth="2.5" fill="none"/>
                   <line x1="6" y1="6" x2="26" y2="26" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round"/>
                 </svg>
@@ -71,22 +74,39 @@ export default function Bubbles({ t }) {
             </button>
             <button
               onClick={handleColor}
-              className="w-6 h-6 rounded-full border-2 border-white/30 cursor-pointer transition-transform hover:scale-110"
+              className="w-6 h-6 rounded-full border-2 border-white/30 cursor-pointer transition-transform hover:scale-110 focus:ring-2 focus:ring-orange-300 focus:outline-none"
               style={{ background: palette.main }}
+              aria-label={`Change color. Current: ${palette.name}`}
               title={`Color: ${palette.name}`}
             />
-            <input
-              type="range" min={1} max={300} value={count}
-              onChange={e => handleCount(Number(e.target.value))}
-              className="accent-orange-500 w-36"
-            />
+            <div className="flex flex-col gap-1">
+              <label htmlFor="bubble-count" className="sr-only">Bubble count: {count}</label>
+              <input
+                id="bubble-count"
+                type="range" 
+                min={1} 
+                max={300} 
+                value={count}
+                onChange={e => handleCount(Number(e.target.value))}
+                className="accent-orange-500 w-36 focus:ring-2 focus:ring-orange-300 rounded"
+                aria-valuemin={1}
+                aria-valuemax={300}
+                aria-valuenow={count}
+                aria-label="Number of bubbles"
+              />
+              <span className="text-xs text-gray-500" aria-live="polite">{count} bubbles</span>
+            </div>
           </div>
         )}
         <button
           onClick={() => setOpen(o => !o)}
-          className="bg-black/70 border border-orange-500/40 rounded-full w-9 h-9 text-lg neon-btn cursor-pointer"
+          className="bg-black/70 border border-orange-500/40 rounded-full w-9 h-9 text-lg neon-btn cursor-pointer focus:ring-2 focus:ring-orange-300 focus:outline-none transition-all"
+          aria-label={t.bubblesAdjust}
+          aria-expanded={open}
           title={t.bubblesAdjust}
-        >🫧</button>
+        >
+          <span aria-hidden="true">🫧</span>
+        </button>
       </div>
     </>
   )
